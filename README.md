@@ -5,16 +5,16 @@ A modern implementation of the classic 2048 game built with React and TypeScript
 ## Features
 
 - 🎮 Classic 2048 gameplay with minimalist UI
-- ⌨️ Keyboard controls (Arrow keys, 'N' for new game)
+- ⌨️ Keyboard controls (Arrow keys, 'N' for new game, 'I' for AI advice)
 - 🎯 Win/lose detection and best score persistence
-- 🤖 AI helper for game suggestions
+- 🤖 AI helper for game suggestions (only supported in local mode to protect API keys)(VPN might be required)
 - 🏗️ Clean architecture with separated game logic and UI
 
 ## How to Play
 
 **Objective**: Combine tiles with the same number to reach the 2048 tile!
 
-**Controls**: Use arrow keys to move tiles, press 'N' for a new game
+**Controls**: Use arrow keys to move tiles, press 'N' for a new game, press 'I' for advice from AI.
 
 **Rules**: Tiles slide and merge when colliding with the same number. New tiles (2 or 4) appear after each move. Game over when no moves are possible.
 
