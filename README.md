@@ -2,6 +2,8 @@
 
 A modern implementation of the classic 2048 game built with React and TypeScript.
 
+**[🎮 Play Here](https://lsrepo.github.io/2048/)**
+
 ## Features
 
 - 🎮 Classic 2048 gameplay with minimalist UI
