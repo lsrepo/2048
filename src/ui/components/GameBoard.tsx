@@ -179,7 +179,7 @@ const GameBoard: React.FC = () => {
     
     return (
       <div key={key} className={cellClass}>
-        {tile ? tile.value : ''}
+        {tile ? (tile.type === 'obstacle' ? '🗿' : tile.value) : ''}
       </div>
     );
   };

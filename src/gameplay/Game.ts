@@ -1,4 +1,4 @@
-import { Tile } from './Tile';
+import { Tile, TileType } from './Tile';
 import { Board, Direction, BoardState } from './Board';
 import { cloneDeep } from 'lodash';
 
@@ -74,6 +74,8 @@ export class Game {
     for (let i = 0; i < numTiles; i++) {
       this.addRandomTile('two-only');
     }
+
+    this.addObstacle();
   }
 
   // Main game logic
@@ -134,6 +136,24 @@ export class Game {
     }
     
     const tile = new Tile(value, position);
+    this._board.addTile(tile);
+    
+    // Emit event with the specific tile that was added
+    this.emitEvent({ type: 'new_tile', data: { tile } });
+  }
+
+  addObstacle(): void {
+    const emptyPositions = this._board.getEmptyPositions();
+    
+    if (emptyPositions.length === 0) {
+      return;
+    }
+
+    // Randomly select an empty position
+    const randomIndex = Math.floor(Math.random() * emptyPositions.length);
+    const position = emptyPositions[randomIndex];
+    
+    const tile = new Tile(0, position, TileType.OBSTACLE);
     this._board.addTile(tile);
     
     // Emit event with the specific tile that was added

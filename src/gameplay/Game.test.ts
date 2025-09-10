@@ -74,12 +74,28 @@ describe('Game - Game Over State', () => {
     });
   });
 
+  describe('Obstacle Management', () => {
+
+    test('should have one obstacle on the board after game starts', () => {
+      // Start the game
+      game.start();
+      
+      // Get all tiles and count obstacles
+      const allTiles = game.getAllTiles();
+      const obstacles = allTiles.filter(tile => tile.isObstacle());
+      
+      // Verify there is exactly one obstacle
+      expect(obstacles).toHaveLength(1);
+    });
+  });
+
   describe('Game State Queries', () => {
     test('should report correct game status', () => {
       expect(game.status).toBe('playing');
       expect(game.isGameOver()).toBe(false);
       expect(game.hasWon()).toBe(false);
     });
+
 
     test('should report valid moves availability', () => {
       game.start();
