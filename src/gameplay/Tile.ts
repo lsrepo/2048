@@ -3,16 +3,21 @@ export interface Position {
   col: number;
 }
 
+export enum TileType {
+  NORMAL = 'normal',
+  OBSTACLE = 'obstacle'
+}
+
 export class Tile {
   readonly value: number;
-  readonly id: string;
+  readonly type: TileType;
   private _position: Position;
   private _merged: boolean;
 
-  constructor(value: number, position: Position, id?: string) {
+  constructor(value: number, position: Position, type: TileType = TileType.NORMAL) {
     this.value = value;
     this._position = position;
-    this.id = id || this.generateId();
+    this.type = type
     this._merged = false;
   }
 
@@ -34,21 +39,27 @@ export class Tile {
 
   mergeWith(other: Tile): Tile {
     const newValue = this.value + other.value;
-    const mergedTile = new Tile(newValue, this._position, this.id);
+    const mergedTile = new Tile(newValue, this._position, );
     mergedTile.merged = true;
     return mergedTile;
   }
 
   canMergeWith(other: Tile): boolean {
+    // Obstacle tiles cannot merge with any tile
+    if (this.type === TileType.OBSTACLE || other.type === TileType.OBSTACLE) {
+      return false;
+    }
     return this.value === other.value && !this._merged && !other.merged;
   }
 
-  private generateId(): string {
-    return `tile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  isObstacle(): boolean {
+    return this.type === TileType.OBSTACLE;
   }
 
+
+
   clone(): Tile {
-    const cloned = new Tile(this.value, this._position, this.id);
+    const cloned = new Tile(this.value, this._position, );
     cloned._merged = this._merged;
     return cloned;
   }
