@@ -13,11 +13,13 @@ export class Tile {
   readonly type: TileType;
   private _position: Position;
   private _merged: boolean;
+  readonly id: string;
 
-  constructor(value: number, position: Position, type: TileType = TileType.NORMAL) {
+  constructor(value: number, position: Position, type: TileType = TileType.NORMAL, id?: string) {
     this.value = value;
     this._position = position;
     this.type = type
+    this.id = id || this.generateId();
     this._merged = false;
   }
 
@@ -39,7 +41,7 @@ export class Tile {
 
   mergeWith(other: Tile): Tile {
     const newValue = this.value + other.value;
-    const mergedTile = new Tile(newValue, this._position, );
+    const mergedTile = new Tile(newValue, this._position, TileType.NORMAL, this.id );
     mergedTile.merged = true;
     return mergedTile;
   }
@@ -59,8 +61,12 @@ export class Tile {
 
 
   clone(): Tile {
-    const cloned = new Tile(this.value, this._position, );
+    const cloned = new Tile(this.value, this._position, this.type, this.id);
     cloned._merged = this._merged;
     return cloned;
+  }
+
+  private generateId(): string {
+    return `tile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 } 

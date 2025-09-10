@@ -1,4 +1,4 @@
-import { Tile, Position } from './Tile';
+import { Tile, Position, TileType } from './Tile';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
@@ -79,6 +79,11 @@ export class Board {
   }
 
   private canTileMove(tile: Tile, direction: Direction): boolean {
+    // Obstacle tiles should never move
+    if (tile.isObstacle()) {
+      return false;
+    }
+    
     const { row, col } = tile.position;
     const nextPos = this.getNextPosition(row, col, direction);
     
@@ -164,7 +169,10 @@ export class Board {
       const tile = this._grid[row][col];
       if (tile) {
         tiles.push(tile);
-        this._grid[row][col] = null;
+        if (!tile.isObstacle()) {
+          this._grid[row][col] = null;
+        }
+        // If obstacle, leave it in place
       }
     }
 
@@ -179,7 +187,7 @@ export class Board {
     // For UP direction, we need to place tiles from top to bottom, so use positive direction vector
     // For DOWN direction, we need to place tiles from bottom to top, so use negative direction vector
     const directionVector: [number, number] = direction === 'up' ? [1, 0] : [-1, 0];
-    this.placeTiles(beginAt, directionVector, mergedTiles);
+    this.placeTiles(beginAt, directionVector, mergedTiles.filter(tile => tile.type !== TileType.OBSTACLE));
   }
 
   private moveRow(row: number, direction: 'left' | 'right'): void {
@@ -190,7 +198,10 @@ export class Board {
       const tile = this._grid[row][col];
       if (tile) {
         tiles.push(tile);
-        this._grid[row][col] = null;
+        if (!tile.isObstacle()) {
+          this._grid[row][col] = null;
+        }
+        // If obstacle, leave it in place
       }
     }
 
@@ -205,7 +216,7 @@ export class Board {
     // For RIGHT direction, we need to place tiles from right to left, so use negative direction vector
     // For LEFT direction, we need to place tiles from left to right, so use positive direction vector
     const directionVector: [number, number] = direction === 'right' ? [0, -1] : [0, 1];
-    this.placeTiles(beginAt, directionVector, mergedTiles);
+    this.placeTiles(beginAt, directionVector, mergedTiles.filter(tile => tile.type !== TileType.OBSTACLE));
   }
 
   /**
@@ -246,16 +257,31 @@ export class Board {
    */
   private placeTiles(beginAt: Position, directionVector: [number, number], tiles: Tile[]): void {
     const [rowDelta, colDelta] = directionVector;
-    
+    let currentRow = beginAt.row;
+    let currentCol = beginAt.col;
+
     for (let i = 0; i < tiles.length; i++) {
       const tile = tiles[i];
-      const row = beginAt.row + (rowDelta * i);
-      const col = beginAt.col + (colDelta * i);
-      
-      if (tile.position.row !== row || tile.position.col !== col) {
-        tile.setPosition({ row, col });
+
+      // Advance until we find a free (null) cell, skipping obstacles left in place
+      while (this.isValidPosition(currentRow, currentCol) && this._grid[currentRow][currentCol] !== null) {
+        currentRow += rowDelta;
+        currentCol += colDelta;
       }
-      this._grid[row][col] = tile;
+
+      // Safety: if we somehow run out of space, stop
+      if (!this.isValidPosition(currentRow, currentCol)) {
+        break;
+      }
+
+      if (tile.position.row !== currentRow || tile.position.col !== currentCol) {
+        tile.setPosition({ row: currentRow, col: currentCol });
+      }
+      this._grid[currentRow][currentCol] = tile;
+
+      // Move pointer for next tile
+      currentRow += rowDelta;
+      currentCol += colDelta;
     }
   }
 

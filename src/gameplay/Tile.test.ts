@@ -1,4 +1,4 @@
-import { Tile, Position } from './Tile';
+import {Tile, Position, TileType} from './Tile';
 
 describe('Tile', () => {
   let tile: Tile;
@@ -27,7 +27,7 @@ describe('Tile', () => {
 
     test('should use provided ID', () => {
       const customId = 'custom-tile-id';
-      const tile = new Tile(8, { row: 0, col: 0 }, customId);
+      const tile = new Tile(8, { row: 0, col: 0 } ,TileType.NORMAL, customId, );
 
       expect(tile.id).toBe(customId);
     });
@@ -67,8 +67,8 @@ describe('Tile', () => {
 
   describe('Merging Logic', () => {
     test('should merge two tiles with same value', () => {
-      const tile1 = new Tile(2, { row: 0, col: 0 });
-      const tile2 = new Tile(2, { row: 0, col: 1 });
+      const tile1 = new Tile(2, { row: 0, col: 0 }, TileType.NORMAL);
+      const tile2 = new Tile(2, { row: 0, col: 1 }, TileType.NORMAL);
       
       const mergedTile = tile1.mergeWith(tile2);
       
@@ -145,7 +145,7 @@ describe('Tile', () => {
 
   describe('Cloning', () => {
     test('should create exact copy of tile', () => {
-      const originalTile = new Tile(16, { row: 2, col: 3 }, 'original-id');
+      const originalTile = new Tile(16, { row: 2, col: 3 }, TileType.NORMAL, 'original-id');
       originalTile.merged = true;
       
       const clonedTile = originalTile.clone();
